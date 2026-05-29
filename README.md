@@ -1,173 +1,95 @@
 # 📊 Data Science Jobs Analysis — SQL & Power BI
-
-A full end-to-end data analysis project using a real-world Glassdoor dataset of data science job postings across the United States. The project covers data importing, cleaning, exploratory data analysis (EDA), and dashboard creation.
-
----
-
-## 📁 Table of Contents
-
-- [About the Dataset](#about-the-dataset)
-- [Project Overview](#project-overview)
-- [Project Structure](#project-structure)
-- [Data Cleaning](#data-cleaning)
-- [Exploratory Data Analysis](#exploratory-data-analysis)
-- [Dashboard](#dashboard)
-- [Key Findings](#key-findings)
-- [Tools Used](#tools-used)
+### Tools Used: MySQL · Power Query · Power BI Desktop
 
 ---
 
-## 📌 About the Dataset
+## 📋 Project Overview
 
-- **Source:** [Kaggle — Data Science Job Posting on Glassdoor](https://www.kaggle.com/datasets/rashikrahmanpritom/data-science-job-posting-on-glassdoor)
-- **Description:** Real job postings scraped from Glassdoor representing data science and data-related job listings across the United States.
-- **Raw columns include:** `job_title`, `salary_estimate`, `job_description`, `rating`, `company_name`, `location`, `headquarters`, `size`, `founded`, `type_of_ownership`, `industry`, `sector`, `revenue`, `competitors`
+An end-to-end data analysis project using a real-world Glassdoor dataset of data science job postings across the United States. The dataset was intentionally complex and required significant restructuring to simulate a realistic data engineering and analytics scenario. The project covers the full pipeline — from importing raw unformatted data, through intensive SQL programmatic cleaning and exploratory data analysis (EDA), to a multi-page interactive Power BI dashboard.
 
----
-
-## 🗺️ Project Overview
-
-The project was completed in three stages:
-
-1. **Data Cleaning** — Fixing, standardizing, and enriching the raw dataset in SQL to make it analysis-ready.
-2. **Exploratory Data Analysis (EDA)** — Querying the cleaned dataset to uncover patterns and insights useful for job seekers and recruiters.
-3. **Dashboard** — Visualizing the findings in Power BI as an interactive "Data Related Jobs Search Guide."
+**Dataset Source:** [Data Science Job Posting on Glassdoor – Kaggle](https://www.kaggle.com/datasets/rashikrahmanpritom/data-science-job-posting-on-glassdoor)
 
 ---
 
-## 🗂️ Project Structure
+## 🔑 Key Findings
 
-```
-├── import_dataset.sql         # Script to import the raw dataset into MySQL
-├── data_cleaning.sql          # Full data cleaning pipeline (staging → cleaned table)
-├── EDA.sql                    # All EDA queries with comments and findings
-├── DS_Jobs_Documentation.pdf  # Written documentation of the full project
-└── README.md
-```
-
-> The Power BI `.pbix` dashboard file is referenced in the documentation.
-
----
-
-## 🧹 Data Cleaning
-
-**File:** `data_cleaning.sql`
-
-Starting from the raw table `ds_jobs_raw`, a staging table `ds_jobs_staging` was created to preserve the original records. The following transformations were applied:
-
-### Duplicate Removal
-- Used `ROW_NUMBER()` with `PARTITION BY` across all relevant columns to identify and delete duplicate rows.
-
-### Job Title Standardization
-- The original titles were overly specific (e.g., *Analytics Manager - Data Mart*).
-- A `CASE` statement with carefully ordered conditions categorized all titles into **10 simplified categories:**
-  - Data Architect, Director Role, Vice President Role, Data Modeler, Data Manager, Machine Learning Engineer, Data Engineer, Developer, Data Analyst, Data Scientist
-
-### Salary Estimate Parsing
-- Original format: `$137K-$171K (Glassdoor est.)`
-- Used nested `SUBSTRING_INDEX()` to extract `min_salary_estimate` and `max_salary_estimate` as integers.
-- Computed `average_salary` as the midpoint, rounded to 2 decimal places.
-- Note: salary values are in `K` format — multiply by 1000 for full values.
-
-### Company Name Cleaning
-- Glassdoor ratings were appended to company names (e.g., *Healthfirst 3.1*).
-- Used `REGEXP` to detect trailing numbers and `SUBSTRING_INDEX` + `REPLACE` to strip them.
-- Known issue: one company name (`bioMérieux`) has a character encoding error from the import process and was left as-is to maintain data integrity.
-
-### Location & Headquarters Splitting
-- Both columns stored city and state together (e.g., `San Francisco, CA`).
-- Split into separate `_city` and `_state` columns using `SUBSTRING_INDEX` with a comma delimiter.
-- Full state names (e.g., `Utah`, `New Jersey`) were converted to 2-letter abbreviations.
-- Values of `United States` were set to `NULL` since no specific city/state could be determined.
-- Corrected 2 headquarters records with an erroneous state code of `061` → `NY`.
-
-### Skill Extraction from Job Descriptions
-- Used `LIKE` pattern matching to flag 13 skills from the `job_description` column.
-- Stored as integers (`1` = required, `0` = not mentioned) for easier aggregation.
-- Skills extracted: `python`, `r_skills`, `sql_skills`, `spark`, `hadoop`, `tableau`, `excel`, `aws`, `azure`, `tensorflow`, `keras`, `pytorch`, `sas`
-
-### Engineered Columns
-- **`senior`** — flags whether the role is senior-level (`Senior`, `Sr`, `Lead`, `Principal` in job title).
-- **`same_state`** — flags whether the job's location state matches the company's headquarters state.
-
-### Final Table
-- A clean table `ds_jobs_cleaned` was created, dropping the raw `job_description` column (skills already extracted) and all original uncleaned columns.
+- **Most In-Demand Role:** Data Scientist dominated the listings with 458 distinct postings.
+- **Highest Compensated Role:** Data Architect commanded the highest compensation with an average salary of $164,500.
+- **Lowest Compensated Role:** Vice President positions recorded the lowest entry average at $101,500 within this specific distribution.
+- **Top Hiring Enterprise:** Maxar Technologies led active recruitment with 12 job openings.
+- **Geographic Hotspots:** San Francisco, CA emerged as the top employment city (58 postings), while California took the lead at the state level with 155 postings.
+- **Premium Salary States:** New York yielded the highest average salary ($136,000), closely followed by Virginia ($127,000).
+- **Highest Paying Industry Sector:** Aerospace & Defense topped the list ($132,700 average salary across 46 openings).
+- **Highest Volume Industry Sector:** Information Technology recorded the highest market demand by job count.
+- **Optimal Company Structure:** Private Companies provided the best baseline balance of workplace culture and compensation, averaging a 4.0/5.0 Glassdoor rating and a $121,868 average salary.
+- **Core Technology Stack:** Python, SQL, and Excel emerged as the top three most globally demanded technical skills.
+- **Seniority Paradox:** Senior titles do not consistently guarantee higher compensation; certain roles (e.g., Director and Data Scientist positions) tracked slightly higher salary midpoints for non-senior variants.
+- **Hiring Out-of-State Premium:** Job postings looking to recruit candidates outside of the company’s home headquarters state pay an average premium of ~$10,207 more than matching same-state listings.
+- **Corporate Scale Inconsequential:** Structural parameters like company size, revenue scale, type of ownership, and corporate founding year revealed no statistically significant correlation with offered salary rates.
 
 ---
 
-## 🔍 Exploratory Data Analysis
+## 🛠️ Project Steps
 
-**File:** `EDA.sql`
+### 1. Data Cleaning (MySQL)
+* **Staging Strategy:** Formulated a localized staging table (`ds_jobs_staging`) from the raw data `ds_jobs_raw` to maintain historical record backups before building clean production formats.
+* **Deduplication Engine:** Leveraged `ROW_NUMBER()` window functions paired with a comprehensive `PARTITION BY` across key descriptive dimensions to target and safely eliminate duplicate rows.
+* **Job Title Standardization:** Consolidated chaotic, highly specific text inputs (e.g., *Analytics Manager - Data Mart*) into **10 definitive job profiles** using a structured conditional `CASE` mapping matrix:
+  > Data Architect, Director Role, Vice President Role, Data Modeler, Data Manager, Machine Learning Engineer, Data Engineer, Developer, Data Analyst, Data Scientist
+* **Salary Parsing Logic:** Deconstructed raw strings like `$137K-$171K (Glassdoor est.)` using nested `SUBSTRING_INDEX()` queries to split and isolate numeric `min_salary_estimate` and `max_salary_estimate` boundaries into integers. Computed a standardized `average_salary` midpoint rounded to 2 decimal points.
+* **Text Truncation & Sanitation:** Stripped appended numerical review rankings from raw text company values (e.g., *Healthfirst 3.1*) by implementing conditional `REGEXP` filters alongside `SUBSTRING_INDEX` and text `REPLACE` string manipulations.
+* **Geographic Field Splitting:** Broke combined regional metrics (e.g., `San Francisco, CA`) into clean, independent `_city` and `_state` relational columns. Implemented dictionary-style updates to map full written state text names into standard 2-letter abbreviations while mapping unidentifiable lines to `NULL`.
+* **Programmatic Skill Extraction:** Engineered 13 logical binary flag columns (`1` = required, `0` = omitted) from free-form text blocks within the raw `job_description` field via wild-card `LIKE` regex matching. Tracked tools include: `python`, `r_skills`, `sql_skills`, `spark`, `hadoop`, `tableau`, `excel`, `aws`, `azure`, `tensorflow`, `keras`, `pytorch`, and `sas`.
+* **Feature Engineering:** - `senior`: Conditional flag isolating senior placement markers (`Senior`, `Sr`, `Lead`, `Principal`) directly out of the title string.
+  - `same_state`: Logical validation check determining if a job position location aligns with the primary corporate headquarters.
+* **Production Table Export:** Constructed the clean final target table `ds_jobs_cleaned` after pruning the raw description columns and outdated unformatted source fragments.
 
-All queries were run against `ds_jobs_cleaned`. Key questions answered:
+### 2. Exploratory Data Analysis (MySQL)
+Investigated 14 distinct data-driven business requirements using structured SQL scripts to extract clear hiring intelligence:
+* Quantified market popularity distributions and volume concentrations per role type.
+* Computed comparative baseline salary midpoints segmented across job categories, sectors, revenue sizes, ownership models, and historical corporate longevity.
+* Evaluated top employment city and state clusters to determine regional geographic hotspots.
+* Profiled top hiring corporations alongside compensation ranges mapped against baseline organizational feedback ratings.
+* Examined corporate recruitment variances between domestic operations and foreign international groups.
+* Cross-referenced financial data splits comparing seniority designations and cross-border out-of-state recruitment premiums.
 
-| # | Question |
-|---|----------|
-| 1 | Most popular data science job posting in this dataset |
-| 2 | Average salary per job title |
-| 3 | Company with the most job postings |
-| 4 | Highest vs. lowest rated companies — salary comparison |
-| 5 | Job posting hotspot by city |
-| 6 | International vs. US local companies — postings and salary |
-| 7 | Company size vs. salary |
-| 8 | Company revenue vs. salary |
-| 9 | Type of ownership vs. salary |
-| 10 | Company founding year vs. salary |
-| 11 | Sector with highest demand and highest paying jobs |
-| 12 | Best type of company to work for (rating + salary) |
-| 13 | Do senior roles pay more? |
-| 14 | Do companies hiring outside their HQ state pay differently? |
-
----
-
-## 📈 Dashboard
-
-Built in **Power BI** with 3 pages, themed as a *Data Related Jobs Search Guide*.
-
-**Page 1 — Salary & Demand Overview**
-- Average salary per job title (bar chart)
-- Average salary per sector (bar chart)
-- Average rating by type of ownership (bar chart)
-- Top states with the highest average salary (bar chart)
-- Filters: State, Job Title
-
-**Page 2 — Salary vs. Demand Scatter**
-- Scatter plot: average salary (Y-axis) vs. job postings (X-axis) per job title
-- KPI cards: Most popular job, salary of most popular job, highest salary job, highest salary value
-- Filters: State, Job Title
-
-**Page 3 — Skills & Senior Analysis**
-- In-demand skills (bar chart — count of job postings requiring each skill)
-- Skills required by job position (dot matrix / heatmap)
-- Senior vs. non-senior salary comparison per job title (grouped bar chart)
-- Filters: State, Job Title, Skill
+### 3. Dashboard Design & Visualization (Power BI)
+Assembled a multi-page interactive executive intelligence dashboard structured as a *Data Related Jobs Search Guide*:
+* **Page 1 — Salary & Demand Overview:** Incorporates horizontal distribution bars tracking average salary baselines per job type, business sector, ownership categories, and top states. Integrates state and job title filter panes.
+* **Page 2 — Salary vs. Demand Scatter:** Houses a custom multi-dimensional scatter matrix comparing average compensation (Y-axis) against job posting volumes (X-axis) across individual job titles. Features high-impact summary cards targeting peak roles.
+* **Page 3 — Skills & Senior Analysis:** Features an inventory checklist of technical tools mapped via volume frequency bars alongside a detailed cross-tabulation dot matrix heatmap evaluating skill requirements per career focus. Features grouped tracking charts comparing senior vs. non-senior compensation ranges.
 
 ---
 
-## 💡 Key Findings
+## 📁 Files in this Repository
 
-- **Most posted role:** Data Scientist (458 postings)
-- **Highest average salary:** Data Architect ($164,500)
-- **Lowest average salary:** Vice President Role ($101,500)
-- **Top hiring company:** Maxar Technologies (12 postings)
-- **Job posting hotspot:** San Francisco, CA (58 postings); California leads at the state level (155 postings)
-- **Highest average salary by state:** New York ($136,000), followed by Virginia ($127,000)
-- **Highest paying sector:** Aerospace & Defense ($132,700 avg, 46 postings)
-- **Highest demand sector:** Information Technology
-- **Best company type (rating + salary):** Company - Private (4.0 avg rating, $121,868 avg salary)
-- **Most in-demand skills:** Python, SQL, Excel
-- **Senior roles do NOT consistently pay more** — some roles (e.g., Director Role, Data Scientist) show higher average salaries for non-senior positions
-- **Company size, revenue, type of ownership, and founding year show no strong influence on salary**
-- **International companies pay slightly more on average**, but the sample size (43 vs. 596 US local postings) makes this less reliable
-- **Jobs hiring outside the company's home state pay ~$10,207 more** on average than same-state postings
+| File | Description |
+|------|-------------|
+| `import_dataset.sql` | MySQL script utilized to safely load and structure raw files into database clusters |
+| `data_cleaning.sql` | Full MySQL script managing data cleansing, staging setups, data type adjustments, and regex logic |
+| `EDA.sql` | Master script tracking the complete suite of analytical exploratory queries used to extract findings |
+| `DS_Jobs_Documentation.pdf` | Detailed engineering write-up documenting methodology, architecture, and complete project breakdowns |
 
 ---
 
-## 🛠️ Tools Used
+## 📊 Dashboard Preview
 
-- **MySQL** — Data importing, cleaning, and EDA
-- **Power Query (Power BI)** — Additional data transformation
-- **Power BI Desktop** — Dashboard creation and visualization
+![Data Science Jobs Dashboard](page1-ds-dashboard.png)
+![Data Science Jobs Dashboard](page2-ds-dashboard.png)
+![Data Science Jobs Dashboard](page3-ds-dashboard.png)
+
+---
+
+## 💡 Conclusions & Strategic Recommendations
+
+The data science and analytics employment market across the United States is fundamentally healthy, with a strong demand for Data Scientist profiles and a premium pricing model favoring Data Architect specialists. 
+
+Candidates and recruiters should take note of these actionable insights:
+1. **Prioritize the Core Tech Stack:** Aspiring professionals should focus heavily on mastering Python, SQL, and Excel, as these three tools remain the most widely expected baselines across all analytics disciplines.
+2. **Target Strategic Sectors:** Job seekers looking for premium compensation should focus their applications on the Aerospace & Defense or Information Technology sectors, while prioritizing private corporations to secure the best balance of higher compensation and positive company ratings.
+3. **Expand Geographic Scope:** Job seekers should look beyond their immediate local markets. Because out-of-state roles offer an average salary premium of ~$10,207, applying to remote or cross-state positions provides a higher financial return than targeting same-state headquarters.
+
+> **Note:** This project utilizes a real-world Glassdoor dataset to show proficiency in database scripting, programmatic data manipulation, and building commercial-grade business intelligence solutions.
 
 ---
 
