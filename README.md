@@ -101,5 +101,3 @@ Candidates and recruiters should take note of these actionable insights:
 - 🐙 [GitHub](https://github.com/nielandreibalagtas)
 
 ---
-
-*Project by Niel Andrei Balagtas — May 2026*
