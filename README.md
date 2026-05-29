@@ -171,4 +171,13 @@ Built in **Power BI** with 3 pages, themed as a *Data Related Jobs Search Guide*
 
 ---
 
+## 👤 Author
+
+**Niel Andrei Balagtas**
+- 📧 nielandreibalagtas@gmail.com
+- 💼 [LinkedIn](https://www.linkedin.com/in/niel-andrei-balagtas-360442379/)
+- 🐙 [GitHub](https://github.com/nielandreibalagtas)
+
+---
+
 *Project by Niel Andrei Balagtas — May 2026*
