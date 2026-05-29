@@ -75,14 +75,20 @@ Assembled a multi-page interactive executive intelligence dashboard structured a
 | `DS_Jobs_Documentation.pdf` | Detailed engineering write-up documenting methodology, architecture, and complete project breakdowns |
 | `page1-ds-dashboard.png` | Main interface capture focusing on Salary and Demand Overview analytics |
 | `page2-ds-dashboard.png` | Secondary layout capture displaying the Demand Scatter and dynamic filtering matrices |
+| `page3-ds-dashboard.png` | Tertiary layout capture focusing on tool demand heatmaps and seniority pay differentials |
 
 ---
 
 ## 📊 Dashboard Preview
 
-![Data Science Jobs Dashboard](page1-ds-dashboard.png)
-![Data Science Jobs Dashboard](page2-ds-dashboard.png)
-![Data Science Jobs Dashboard](page3-ds-dashboard.png)
+### Page 1 — Salary & Demand Overview
+![Salary and Demand Overview](page1-ds-dashboard.png)
+
+### Page 2 — Salary vs. Demand Matrix Scatter
+![Salary vs Demand Scatter](page2-ds-dashboard.png)
+
+### Page 3 — Skills & Senior Analysis
+![Skills and Senior Analysis](page3-ds-dashboard.png)
 
 ---
 
