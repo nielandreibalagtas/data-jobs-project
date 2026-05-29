@@ -66,9 +66,15 @@ Assembled a multi-page interactive executive intelligence dashboard structured a
 | File | Description |
 |------|-------------|
 | `import_dataset.sql` | MySQL script utilized to safely load and structure raw files into database clusters |
-| `data_cleaning.sql` | Full MySQL script managing data cleansing, staging setups, data type adjustments, and regex logic |
+| `data cleaning.sql` | Full MySQL script managing data cleansing, staging setups, data type adjustments, and regex logic |
 | `EDA.sql` | Master script tracking the complete suite of analytical exploratory queries used to extract findings |
+| `Uncleaned_DS_jobs.csv` | Raw source dataset containing unformatted job postings scraped from Glassdoor |
+| `ds_jobs_cleaned.csv` | Cleaned production-ready output file generated after running SQL transformations |
+| `DS JOBS DASHBOARD.pbix` | Main Power BI workbook file containing data models, canvas reports, and active visuals |
+| `DS JOBS DASHBOARD PREVIEW.pdf` | Dedicated PDF document providing a direct visual snapshot of the analytics layouts |
 | `DS_Jobs_Documentation.pdf` | Detailed engineering write-up documenting methodology, architecture, and complete project breakdowns |
+| `page1-ds-dashboard.png` | Main interface capture focusing on Salary and Demand Overview analytics |
+| `page2-ds-dashboard.png` | Secondary layout capture displaying the Demand Scatter and dynamic filtering matrices |
 
 ---
 
